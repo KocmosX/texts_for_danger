@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Результаты анализа</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        font-family: "Arial", sans-serif;
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(135deg, #003366, #0066cc);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .floating-text {
+        position: absolute;
+        font-size: 3rem;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.7);
+        animation: float 10s linear infinite;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh);
+          opacity: 0;
+        }
+      }
+
+      .floating-text:nth-child(1) {
+        animation-delay: 0s;
+        left: 10%;
+      }
+
+      .floating-text:nth-child(2) {
+        animation-delay: 2s;
+        left: 30%;
+      }
+
+      .floating-text:nth-child(3) {
+        animation-delay: 4s;
+        left: 50%;
+      }
+
+      .floating-text:nth-child(4) {
+        animation-delay: 6s;
+        left: 70%;
+      }
+
+      .floating-text:nth-child(5) {
+        animation-delay: 8s;
+        left: 90%;
+      }
+
+      .wrapper {
+        background: #ffffff;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        padding: 40px;
+        text-align: center;
+        max-width: 700px;
+        width: 90%;
+        animation: fadeIn 1s ease-out;
+        overflow-y: auto;
+        max-height: 80vh;
+        z-index: 1;
+        color: #000; /* Убедитесь, что текст черный */
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      h1 {
+        color: #003366;
+        margin-bottom: 30px;
+        font-size: 28px;
+      }
+
+      .result-wrapper {
+        margin-top: 30px;
+        font-size: 18px;
+        text-align: left;
+      }
+
+      .result {
+        margin-top: 20px;
+        padding: 20px;
+        border-radius: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        background: #f9f9f9;
+        font-size: 20px;
+      }
+
+      .result__left {
+        color: #28a745;
+        font-weight: bold;
+      }
+
+      .result__right {
+        color: #dc3545;
+        font-weight: bold;
+      }
+
+      .error-message {
+        color: #dc3545;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+
+      .dangerous-words {
+        color: #dc3545;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+
+      .danger-alert {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+
+      .highlight {
+        background-color: yellow;
+      }
+
+      .danger-highlight {
+        color: red;
+        font-weight: bold;
+      }
+
+      /* Адаптивность */
+      @media (max-width: 768px) {
+        .wrapper {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 22px;
+        }
+
+        .result {
+          font-size: 16px;
+          flex-direction: column;
+          text-align: left;
+        }
+
+        .result__left,
+        .result__right {
+          margin-bottom: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="wrapper">
+      <h1>Результаты анализа</h1>
+      <form action="{{ url_for('results') }}" method="get">
+        <label for="filter">Фильтр:</label>
+        <select id="filter" name="filter" onchange="this.form.submit()">
+          <option value="all" {% if filter == 'all' %}selected{% endif %}>Все</option>
+          <option value="dangerous" {% if filter == 'dangerous' %}selected{% endif %}>Опасные</option>
+          <option value="safe" {% if filter == 'safe' %}selected{% endif %}>Безопасные</option>
+        </select>
+      </form>
+      <p>Всего обработано записей: {{ total_records }}</p>
+      <p>Опасных новостей: {{ dangerous_count }}</p>
+      <p>Безопасных новостей: {{ safe_count }}</p>
+      {% for result in results %}
+      <div class="result-wrapper">
+        <p><strong>Текст:</strong> {{ result.text }}</p>
+        {% if result.error_message %}
+        <div class="error-message">{{ result.error_message }}</div>
+        {% else %}
+        <div class="result">
+          <div class="result__left">
+            Результат проверки: {{ result.type_of_tonal }}
+          </div>
+          <div class="result__right">Риск: {{ result.prob }}%</div>
+        </div>
+        {% if result.dangerous_words %}
+        <div class="danger-alert">
+          Опасные слова: {{ ', '.join(result.dangerous_words) }}
+        </div>
+        <p><strong>Текст с выделенными опасными словами:</strong></p>
+        <p>
+          {% for word in result.text.split() %}
+          {% if word in result.dangerous_words %}
+          <span class="danger-highlight">{{ word }}</span>
+          {% else %}
+          {{ word }}
+          {% endif %}
+          {% endfor %}
+        </p>
+        {% endif %}
+        {% endif %}
+      </div>
+      {% endfor %}
+      <a href="/" class="button">Вернуться назад</a>
+    </div>
+  </body>
+</html>

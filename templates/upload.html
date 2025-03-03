@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Загрузка Excel файла</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        font-family: "Arial", sans-serif;
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(135deg, #003366, #0066cc);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .floating-text {
+        position: absolute;
+        font-size: 3rem;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.7);
+        animation: float 10s linear infinite;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh);
+          opacity: 0;
+        }
+      }
+
+      .floating-text:nth-child(1) {
+        animation-delay: 0s;
+        left: 10%;
+      }
+
+      .floating-text:nth-child(2) {
+        animation-delay: 2s;
+        left: 30%;
+      }
+
+      .floating-text:nth-child(3) {
+        animation-delay: 4s;
+        left: 50%;
+      }
+
+      .floating-text:nth-child(4) {
+        animation-delay: 6s;
+        left: 70%;
+      }
+
+      .floating-text:nth-child(5) {
+        animation-delay: 8s;
+        left: 90%;
+      }
+
+      .wrapper {
+        background: #ffffff;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        padding: 40px;
+        text-align: center;
+        max-width: 700px;
+        width: 90%;
+        animation: fadeIn 1s ease-out;
+        z-index: 1;
+        color: #000; /* Убедитесь, что текст черный */
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      h1 {
+        color: #003366;
+        margin-bottom: 30px;
+        font-size: 28px;
+      }
+
+      .button-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 40px; /* Добавлен отступ */
+      }
+
+      .button {
+        display: inline-block;
+        background: #003366;
+        color: #fff;
+        font-size: 18px;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex: 1;
+        margin: 0 10px;
+      }
+
+      .button:hover {
+        background: #0059b3;
+        transform: scale(1.05);
+      }
+
+      .drop-zone {
+        border: 2px dashed #003366;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        background: #f9f9f9;
+        margin-top: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .drop-zone:hover {
+        background: #e9e9e9;
+      }
+
+      .drop-zone input[type="file"] {
+        display: none;
+      }
+
+      .progress-bar {
+        width: 100%;
+        background-color: #f3f3f3;
+        border-radius: 10px;
+        margin-top: 20px;
+        overflow: hidden;
+      }
+
+      .progress-bar-fill {
+        height: 20px;
+        background-color: #003366;
+        width: 0;
+        transition: width 0.3s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="floating-text">KocmocX</div>
+    <div class="wrapper">
+      <h1>Загрузка Excel файла</h1>
+      <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+        <label class="drop-zone" for="file-upload">
+          Перетащите файл сюда или нажмите, чтобы выбрать файл
+          <input type="file" id="file-upload" name="file" accept=".xlsx, .xls" />
+        </label>
+        <div class="button-container">
+          <input type="submit" value="Загрузить" class="button" />
+          <a href="/" class="button">Вернуться назад</a>
+        </div>
+      </form>
+      <div class="progress-bar">
+        <div class="progress-bar-fill" id="progress-bar-fill"></div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const socket = io.connect('http://' + document.domain + ':' + location.port);
+        const progressBarFill = document.getElementById('progress-bar-fill');
+
+        socket.on('progress', function(data) {
+          progressBarFill.style.width = data.progress + '%';
+        });
+
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+          progressBarFill.style.width = '0%';
+        });
+      });
+    </script>
+  </body>
+</html>
